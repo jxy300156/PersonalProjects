@@ -27,6 +27,7 @@ public class InitialView {
                 break;
             default:
                 System.out.println("输入有误请重新输入！");
+                view();
         }
     }
 }

@@ -34,7 +34,7 @@ public class ManagerController {
             System.out.println("参数有误！");
             return;
         }
-        String sql = "insert into shop.catagory(name) values (?)";
+        String sql = "insert into category(name) values (?)";
         try(
                 Connection connection = connectionPool.getConnection();
                 PreparedStatement ps = connection.prepareStatement(sql)){
@@ -49,7 +49,7 @@ public class ManagerController {
             System.out.println("参数有误！");
             return;
         }
-        String sql = "update shop.catagory set name = ? where id = ?";
+        String sql = "update category set name = ? where id = ?";
         try(
                 Connection connection = connectionPool.getConnection();
                 PreparedStatement ps = connection.prepareStatement(sql)){
@@ -62,7 +62,7 @@ public class ManagerController {
     }
     public void deleteCategory(int cid){
 
-        String sql = "delete from shop.catagory where id = ?";
+        String sql = "delete from category where id = ?";
         try(
                 Connection connection = connectionPool.getConnection();
                 PreparedStatement ps = connection.prepareStatement(sql)){
@@ -77,7 +77,7 @@ public class ManagerController {
             System.out.println("参数有误！");
             return;
         }
-        String sql = "insert into shop.product(name,originalprice,cid,stock,createDate," +
+        String sql = "insert into shop.product(name,originalprice,cid,stock,creatDate," +
                 "promoteprice,subtitle) values (?,?,?,?,?,?,?)";
         try(
                 Connection connection = connectionPool.getConnection();
@@ -86,7 +86,9 @@ public class ManagerController {
             ps.setDouble(2,p.getOriginalPrice());
             ps.setInt(3,p.getCategory().getCid());
             ps.setInt(4,p.getStock());
-            ps.setDate(5, (Date) p.getCreateDate());
+            java.util.Date utilDate = p.getCreateDate();
+            java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
+            ps.setDate(5, sqlDate);
             ps.setDouble(6,p.getPromotePrice());
             ps.setString(7,p.getSubTitle());
             ps.execute();
@@ -100,7 +102,7 @@ public class ManagerController {
             return;
         }
         String sql = "update shop.product set name=?,originalprice=?,stock=?," +
-                "createDate=?,promoteprice=?,subtitle=? where id = ? and cid=?";
+                "creatDate=?,promoteprice=?,subtitle=? where id = ? and cid=?";
         try(
                 Connection connection = connectionPool.getConnection();
                 PreparedStatement ps = connection.prepareStatement(sql)){
@@ -108,7 +110,9 @@ public class ManagerController {
             ps.setDouble(2,p.getOriginalPrice());
 
             ps.setInt(3,p.getStock());
-            ps.setDate(4, (Date) p.getCreateDate());
+            java.util.Date utilDate = p.getCreateDate();
+            java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
+            ps.setDate(4, sqlDate);
             ps.setDouble(5,p.getPromotePrice());
             ps.setString(6,p.getSubTitle());
             ps.setInt(7,p.getPid());
@@ -181,7 +185,7 @@ public class ManagerController {
             System.out.println("参数有误！");
             return;
         }
-        String sql = "insert into shop.propertyvalue(pid,ptid,value) values (?,?)";
+        String sql = "insert into shop.propertyvalue(pid,ptid,`value`) values (?,?,?)";
         try(
                 Connection connection = connectionPool.getConnection();
                 PreparedStatement ps = connection.prepareStatement(sql)){
@@ -213,7 +217,7 @@ public class ManagerController {
     }
     public void deletePropertyValue(int pvId){
 
-        String sql = "delete from shop.productvalue where id = ?";
+        String sql = "delete from propertyvalue where id = ?";
         try(
                 Connection connection = connectionPool.getConnection();
                 PreparedStatement ps = connection.prepareStatement(sql)){
@@ -236,7 +240,7 @@ public class ManagerController {
                 double origibakprice = rs.getDouble("originalprice");
                 int cid=rs.getInt("cid");
                 List<Category> categories = getCategory();
-                Category category = categories.get(cid-1);
+                Category category = categories.get(cid);
                 int stock=rs.getInt("stock");
                 Date creatDate=rs.getDate("creatDAte");
                 double promoteprice=rs.getDouble("promoteprice");
@@ -260,7 +264,7 @@ public class ManagerController {
                 int id = rs.getInt("id");
                 int cid = rs.getInt("cid");
                 List<Category> categories = getCategory();
-                Category category = categories.get(cid-1);
+                Category category = categories.get(cid);
                 String name = rs.getString("name");
                 Property property = new Property(id,category    ,name);
                 properties.add(property);
@@ -288,28 +292,6 @@ public class ManagerController {
         }
         return categoryList;
     }
-    public List<User> getUsers() {
-        LinkedList<User> userList = new LinkedList<>();
-        String sql="select * from user";
-        try (Connection connection= connectionPool.getConnection();
-             PreparedStatement ps = connection.prepareStatement(sql);
-        ){
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()){
-                int id = rs.getInt("id");
-                String userName1 = rs.getString("username");
-                String password1 = rs.getString("username");
-                String authority1 = rs.getString("authority");
-                String phone1 = rs.getString("phone");
-                double money1 = rs.getDouble("money");
-                User user = new User(id,userName1,password1,authority1,phone1,money1);
-                userList.add(user);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return userList;
-    }
     public List<Order> getOrders(){
         LinkedList<Order> orderList = new LinkedList<>();
         String sql="select * from `order`";
@@ -320,12 +302,10 @@ public class ManagerController {
             while (rs.next()){
                 int oid = rs.getInt("order_id");
                 int uid = rs.getInt("user_id");
-                User user = getUsers().get(uid-1);
                 int addrId = rs.getInt("address_id");
-                Address address = getAddress().get(addrId-1);
                 Date oDate=rs.getDate("order_date");
                 String orderStatus=rs.getString("order_status");
-                Order order = new Order(oid,user,address,oDate,orderStatus);
+                Order order = new Order(oid,uid,addrId,oDate,orderStatus);
                 orderList.add(order);
             }
             System.out.println(orderList);
@@ -333,28 +313,6 @@ public class ManagerController {
             e.printStackTrace();
         }
         return orderList;
-    }
-    public List<Address> getAddress(){
-        LinkedList<Address> addresses = new LinkedList<>();
-        String sql="select * from address";
-        try (Connection connection= connectionPool.getConnection();
-             PreparedStatement ps = connection.prepareStatement(sql);
-        ){
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()){
-                int addrId = rs.getInt("rid");
-                int uid = rs.getInt("uid");
-                User user = getUsers().get(uid-1);
-                String province = rs.getString("province_addr");
-                String city = rs.getString("city_addr");
-                String detail = rs.getString("detail_addr");
-                Address address = new Address(addrId,user,province,city,detail);
-                addresses.add(address);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return addresses;
     }
     public void settleOrder(int oid,int uid,int addId){
         String sql = "update `order` set order_status=? where order_id = ? and user_id=? and address_id = ?";

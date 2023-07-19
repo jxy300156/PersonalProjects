@@ -14,8 +14,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 
 public class OrderDetail {
-    private int odId;
-    private Order order;
-    private Product product;
+    private int orderDeId;
+    private int orderId;
+    private int productId;
     private int quantity;
 }

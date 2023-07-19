@@ -16,6 +16,7 @@ public class ManagerLoginView {
         System.out.println("3.商品属性管理");
         System.out.println("4.商品属性值管理");
         System.out.println("5.订单管理");
+        System.out.println("6.退出");
         Scanner sc = new Scanner(System.in);
         int choice = sc.nextInt();
         switch (choice){
@@ -38,6 +39,9 @@ public class ManagerLoginView {
             case 5:
                 OrderManageView orderManageView = new OrderManageView();
                 orderManageView.view();
+                break;
+            case 6:
+                return;
             default:
                 System.out.println("输入有误请重新输入！");
         }

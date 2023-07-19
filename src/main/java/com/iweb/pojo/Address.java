@@ -13,13 +13,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Address {
     private int addrId;
-    private User user;
+    private int userId;
     private String province;
     private String city;
     private String detail;
 
-    public Address(User user, String province, String city, String detail) {
-        this.user = user;
+    public Address(int userId, String province, String city, String detail) {
+        this.userId = userId;
         this.province = province;
         this.city = city;
         this.detail = detail;

@@ -8,6 +8,7 @@ import com.iweb.view.UserLoginView;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.text.ParseException;
 import java.util.Scanner;
 import java.util.concurrent.*;
 
@@ -25,7 +26,7 @@ public class LoginAndRegisterController {
         threadPool = new ThreadPoolExecutor(CORE_THREADS,25,60, TimeUnit.SECONDS,
                 new LinkedBlockingDeque<Runnable>());
     }
-    public void loginUser(){
+    public void loginUser() throws ParseException {
         UserLoginView userLoginView = new UserLoginView();
         ManagerLoginView managerLoginView = new ManagerLoginView();
         Scanner sc = new Scanner(System.in);
@@ -34,8 +35,8 @@ public class LoginAndRegisterController {
         System.out.println("请输入您的密码:");
         String password = sc.nextLine();
         System.out.println("请选择您的账户类型:");
-        System.out.println("1.admin");
-        System.out.println("2.user");
+        System.out.println("1.user");
+        System.out.println("2.admin");
         int choice = sc.nextInt();
         switch (choice){
             case 1:
@@ -81,9 +82,12 @@ public class LoginAndRegisterController {
     private boolean checkUserInfo(String userName,String password,int authorityChoice){
         Connection connection = connectionPool.getConnection();
         try{
-            if(userName==null)
+            if(userName==null||userName.equals("")||password==null||password.equals("")){
+                System.out.println("参数有误！");
+                return false;
+            }
             if(authorityChoice==1) {
-                String sql = "select * from shop.user where username = ? , password = ? and authority = admin";
+                String sql = "select * from shop.user where username = ? and password = ? and authority = 'user'";
                 PreparedStatement ps = connection.prepareStatement(sql);
                 ps.setString(1, userName);
                 ps.setString(2, password);
@@ -92,7 +96,7 @@ public class LoginAndRegisterController {
                     return true;
                 }
             }else if(authorityChoice==2){
-                String sql = "select * from shop.user where username = ? , password = ? and authority = user";
+                String sql = "select * from shop.user where username = ? and password = ? and authority = 'admin'";
                 PreparedStatement ps = connection.prepareStatement(sql);
                 ps.setString(1, userName);
                 ps.setString(2, password);
@@ -114,9 +118,9 @@ public class LoginAndRegisterController {
     private boolean checkRegister(User u){
         Connection connection = connectionPool.getConnection();
         try{
-            if(u==null||u.getUid()<0||u.getUserName()==null||u.getUserName().equals("")||
+            if(u==null||u.getUserName()==null||u.getUserName().equals("")||
             u.getPassword()==null||u.getPassword().equals("")||u.getAuthority()==null||
-            !(u.getAuthority().equals("user")&&u.getAuthority().equals("admin"))||u.getPhone()==null
+            !(u.getAuthority().equals("user")||u.getAuthority().equals("admin"))||u.getPhone()==null
             ||u.getPhone().equals("")||u.getMoney()==0){
                 System.out.println("参数有误！");
                 return false;

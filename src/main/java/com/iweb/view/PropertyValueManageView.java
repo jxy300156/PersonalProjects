@@ -28,20 +28,27 @@ public class PropertyValueManageView {
         switch (choice) {
             case 1:
                 System.out.println("请输入您要添加的属性值信息：");
+                System.out.println("商品id：");
                 Product product1 = mc.getProduct().get(sc.nextInt());
+                System.out.println("属性id：");
                 Property property1 = mc.getProperty().get(sc.nextInt());
-                String cname1 = sc.nextLine();
-                mc.addPropertyValue(new PropertyValue(product1,property1,cname1));
+                System.out.println("属性值信息：");
+                String value1 = sc.nextLine();
+                mc.addPropertyValue(new PropertyValue(product1,property1,value1));
                 break;
             case 2:
                 System.out.println("请输入您要修改的属性值信息：");
+                System.out.println("商品id：");
                 Product product2 = mc.getProduct().get(sc.nextInt());
+                System.out.println("属性id：");
                 Property property2 = mc.getProperty().get(sc.nextInt());
-                String cname2 = sc.nextLine();
-                mc.changePropertyValue(new PropertyValue(product2,property2,cname2));
+                System.out.println("属性值信息：");
+                String value2 = sc.nextLine();
+                mc.changePropertyValue(new PropertyValue(product2,property2,value2));
                 break;
             case 3:
                 System.out.println("请输入您要删除的属性值信息：");
+                System.out.println("属性值id：");
                 int pvId = sc.nextInt();
                 mc.deletePropertyValue(pvId);
                 break;

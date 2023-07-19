@@ -27,8 +27,11 @@ public class OrderManageView {
                 break;
             case 2:
                 System.out.println("请输入你所需要发货的订单编号和用户id以及地址编号");
+                System.out.println("订单编号:");
                 int oid = sc.nextInt();
+                System.out.println("用户id:");
                 int uid = sc.nextInt();
+                System.out.println("地址编号:");
                 int addId = sc.nextInt();
                 mc.settleOrder(oid,uid,addId);
                 break;

@@ -21,16 +21,19 @@ public class CategoryManageView {
         switch (choice) {
             case 1:
                 System.out.println("请输入您要添加的分类信息：");
+                System.out.println("分类名称：");
                 String cname1 = sc.nextLine();
                 mc.addCategory(new Category(cname1));
                 break;
             case 2:
                 System.out.println("请输入您要修改的分类信息：");
+                System.out.println("分类名称：");
                 String cname2 = sc.nextLine();
                 mc.changeCategory(new Category(cname2));
                 break;
             case 3:
                 System.out.println("请输入您要删除的分类信息：");
+                System.out.println("分类id：");
                 int cid = sc.nextInt();
                 mc.deleteCategory(cid);
                 break;

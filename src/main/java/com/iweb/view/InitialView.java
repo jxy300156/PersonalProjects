@@ -2,6 +2,7 @@ package com.iweb.view;
 
 import com.iweb.util.LoginAndRegisterController;
 
+import java.text.ParseException;
 import java.util.Scanner;
 
 /**
@@ -9,7 +10,7 @@ import java.util.Scanner;
  * @date
  */
 public class InitialView {
-    public void view() {
+    public void view() throws ParseException {
         LoginAndRegisterController loginAndRegisterController = new LoginAndRegisterController();
         System.out.println("欢迎来到自助商城系统");
         System.out.println("请选择：");

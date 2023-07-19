@@ -100,7 +100,7 @@ public class ManagerController {
             return;
         }
         String sql = "update shop.product set name=?,originalprice=?,stock=?," +
-                "createDate=?,promoteprice=?,subtitle=? where id = ?,cid=?";
+                "createDate=?,promoteprice=?,subtitle=? where id = ? and cid=?";
         try(
                 Connection connection = connectionPool.getConnection();
                 PreparedStatement ps = connection.prepareStatement(sql)){
@@ -151,7 +151,7 @@ public class ManagerController {
             System.out.println("参数有误！");
             return;
         }
-        String sql = "update shop.property set name=? where id = ?,cid=?";
+        String sql = "update shop.property set name=? where id = ? and cid=?";
         try(
                 Connection connection = connectionPool.getConnection();
                 PreparedStatement ps = connection.prepareStatement(sql)){
@@ -198,7 +198,7 @@ public class ManagerController {
             System.out.println("参数有误！");
             return;
         }
-        String sql = "update shop.propertyvalue set value=? where id = ?,pid=? and ptid=? ";
+        String sql = "update shop.propertyvalue set value=? where id = ? and pid=? and ptid=? ";
         try(
                 Connection connection = connectionPool.getConnection();
                 PreparedStatement ps = connection.prepareStatement(sql)){

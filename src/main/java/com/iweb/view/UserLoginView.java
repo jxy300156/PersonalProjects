@@ -1,5 +1,6 @@
 package com.iweb.view;
 
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 /**
@@ -18,27 +19,31 @@ public class UserLoginView {
         System.out.println("6.充值账户");
         System.out.println("7.联系客服");
         Scanner sc = new Scanner(System.in);
-        int choice = sc.nextInt();
-        switch (choice){
-            case 1:
+        try {
+            int choice = sc.nextInt();
+            switch (choice) {
+                case 1:
 
-                break;
-            case 2:
+                    break;
+                case 2:
 
-                break;
-            case 3:
+                    break;
+                case 3:
 
-                break;
-            case 4:
-                break;
-            case 5:
-                break;
-            case 6:
-                break;
-            case 7:
-                break;
-            default:
-                System.out.println("输入有误请重新输入！");
+                    break;
+                case 4:
+                    break;
+                case 5:
+                    break;
+                case 6:
+                    break;
+                case 7:
+                    break;
+                default:
+                    System.out.println("输入有误请重新输入！");
+            }
+        }catch (InputMismatchException e) {
+            System.out.println("输入不匹配预期类型，请输入一个整数。");
         }
     }
 }

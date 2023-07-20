@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.text.ParseException;
+import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.*;
 
@@ -21,6 +22,7 @@ public class LoginAndRegisterController {
     private static final int CONNECTIONS = 20;
     private ConnectionPool connectionPool;
     private ThreadPoolExecutor threadPool;
+    private List<User> loginUsers;
     public LoginAndRegisterController(){
         connectionPool = new ConnectionPool(CONNECTIONS);
         threadPool = new ThreadPoolExecutor(CORE_THREADS,25,60, TimeUnit.SECONDS,
@@ -40,7 +42,8 @@ public class LoginAndRegisterController {
         int choice = sc.nextInt();
         switch (choice){
             case 1:
-                if(checkUserInfo(userName,password,1)){
+                boolean isUser = checkUserInfo(userName,password,"user");
+                if (isUser){
                     System.out.println("登录成功");
                     userLoginView.view();
                 }else {
@@ -48,7 +51,8 @@ public class LoginAndRegisterController {
                 }
                 break;
             case 2:
-                if(checkUserInfo(userName,password,2)){
+                boolean isManager = checkManagerInfo(userName,password,"admin");
+                if(isManager){
                     System.out.println("登录成功");
                     managerLoginView.view();
                 }else {
@@ -79,34 +83,44 @@ public class LoginAndRegisterController {
             System.out.println("注册失败");
         }
     }
-    private boolean checkUserInfo(String userName,String password,int authorityChoice){
+    private boolean checkUserInfo(String userName,String password,String authority){
         Connection connection = connectionPool.getConnection();
         try{
             if(userName==null||userName.equals("")||password==null||password.equals("")){
                 System.out.println("参数有误！");
                 return false;
             }
-            if(authorityChoice==1) {
-                String sql = "select * from shop.user where username = ? and password = ? and authority = 'user'";
-                PreparedStatement ps = connection.prepareStatement(sql);
-                ps.setString(1, userName);
-                ps.setString(2, password);
-                ResultSet result = ps.executeQuery();
-                if (result.next()) {
-                    return true;
-                }
-            }else if(authorityChoice==2){
-                String sql = "select * from shop.user where username = ? and password = ? and authority = 'admin'";
-                PreparedStatement ps = connection.prepareStatement(sql);
-                ps.setString(1, userName);
-                ps.setString(2, password);
-                ResultSet result = ps.executeQuery();
-                if (result.next()) {
-                    return true;
-                }
-            }else {
-                System.out.println("您的用户类型不正确");
+            String sql = "select * from shop.user where username = ? and password = ? and authority = ?";
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setString(1, userName);
+            ps.setString(2, password);
+            ps.setString(3, authority);
+            ResultSet result = ps.executeQuery();
+            if (result.next()) {
+                return true;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            connectionPool.returnConnection(connection);
+        }
+        return false;
+    }
+    private boolean checkManagerInfo(String userName,String password,String authoritye){
+        Connection connection = connectionPool.getConnection();
+        try {
+            if (userName == null || userName.equals("") || password == null || password.equals("")) {
+                System.out.println("参数有误！");
                 return false;
+            }
+            String sql = "select * from shop.user where username = ? and password = ? and authority = ?";
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setString(1, userName);
+            ps.setString(2, password);
+            ps.setString(3, authoritye);
+            ResultSet result = ps.executeQuery();
+            if (result.next()) {
+                return true;
             }
         }catch (Exception e){
             e.printStackTrace();
